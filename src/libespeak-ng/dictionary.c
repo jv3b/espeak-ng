@@ -2814,7 +2814,7 @@ static const char *LookupDict2(Translator *tr, const char *word, const char *wor
                     // (check for wtab prevents showing RULE_SPELLING byte when speaking individual letters)
                     memcpy(word_buf, word2, word_end-word2);
                     word_buf[word_end-word2-1] = 0;
-                    fprintf(f_trans, "%s %s~||~%s~|~|~\n", word1, word_buf, ph_decoded);
+                    fprintf(f_trans, "%s %s~|||~%s~|~|~\n", word1, word_buf, ph_decoded);
                 } else
                     // These are single word matches, for example (e.g => forexample)
                     fprintf(f_trans, "%s~|||~%s~|~|~\n", word1, ph_decoded);
