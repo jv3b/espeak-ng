@@ -2814,11 +2814,10 @@ static const char *LookupDict2(Translator *tr, const char *word, const char *wor
                     // (check for wtab prevents showing RULE_SPELLING byte when speaking individual letters)
                     memcpy(word_buf, word2, word_end-word2);
                     word_buf[word_end-word2-1] = 0;
-                    fprintf(f_trans, "%s %s~|||~%s\n", word1, word_buf, ph_decoded);
+                    fprintf(f_trans, "%s %s~||~%s~|~|~\n", word1, word_buf, ph_decoded);
                 } else
-                    // Modify -X command to not print single word matches, only more than 1 word matches.
-                    // Print for more than 1 word matches is right above.
-                    fprintf(f_trans, "%s~|||~%s\n", word1, ph_decoded);
+                    // These are single word matches, for example (e.g => forexample)
+                    fprintf(f_trans, "%s~|||~%s~|~|~\n", word1, ph_decoded);
 
                 //Comment dicitonary flags out, we dont need that
                 //print_dictionary_flags(flags, dict_flags_buf, sizeof(dict_flags_buf));
