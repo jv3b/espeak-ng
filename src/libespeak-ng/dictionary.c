@@ -2167,6 +2167,12 @@ static void MatchRule(Translator *tr, char *word[], char *word_start, int group_
 
     if (best.points == 0)
         best.phonemes = "";
+
+
+    /*char decoded_phonemes[80];
+    DecodePhonemes(best.phonemes, decoded_phonemes);
+    printf("best phoneme: %s\n", decoded_phonemes);*/
+
     memcpy(match_out, &best, sizeof(MatchRecord));
 }
 
@@ -2196,6 +2202,8 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
     char ph_buf[40];
     char word_copy[N_WORD_BYTES];
     static const char str_pause[2] = { phonPAUSE_NOLINK, 0 };
+    char full_word[80];
+    int word_idx = 0;
 
     if (tr->data_dictrules == NULL)
         return 0;
@@ -2234,6 +2242,9 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
         end_phonemes[0] = 0;
 
     while (((c = *p) != ' ') && (c != 0)) {
+        //printf("char: %c \n", c);
+        full_word[word_idx] = c;
+        word_idx ++;
         wc_bytes = utf8_in(&wc, p);
         if (IsAlpha(wc))
             any_alpha++;
@@ -2421,7 +2432,10 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
             AppendPhonemes(tr, phonemes, ph_size, match1.phonemes);
         }
     }
-
+    full_word[word_idx] = '\0';
+    char decoded_phonemes[80];
+    DecodePhonemes(phonemes, decoded_phonemes);
+    printf("~|||~%s~|~|~\n", decoded_phonemes);
     memcpy(p_start, word_copy, strlen(word_copy));
 
     return 0;
@@ -2814,10 +2828,12 @@ static const char *LookupDict2(Translator *tr, const char *word, const char *wor
                     // (check for wtab prevents showing RULE_SPELLING byte when speaking individual letters)
                     memcpy(word_buf, word2, word_end-word2);
                     word_buf[word_end-word2-1] = 0;
-                    fprintf(f_trans, "%s %s~|||~%s~|~|~\n", word1, word_buf, ph_decoded);
+                    fprintf(f_trans, " %s~|||~%s~|~|~\n", word_buf, ph_decoded);
+                    //fprintf(f_trans, "~|||~%s~|~|~\n", ph_decoded);
                 } else
                     // These are single word matches, for example (e.g => forexample)
-                    fprintf(f_trans, "%s~|||~%s~|~|~\n", word1, ph_decoded);
+                    //fprintf(f_trans, "%s~|||~%s~|~|~\n", word1, ph_decoded);
+                    fprintf(f_trans, "~|||~%s~|~|~\n", ph_decoded);
 
                 //Comment dicitonary flags out, we dont need that
                 //print_dictionary_flags(flags, dict_flags_buf, sizeof(dict_flags_buf));
@@ -2946,13 +2962,13 @@ int LookupDictList(Translator *tr, char **wordptr, char *ph_out, unsigned int *f
                 word1 = *wordptr;
                 *wordptr = &word_replacement[2];
 
-                /* Comment this out for prety print -X
+                // Comment this out for prety print -X
                 if (option_phonemes & espeakPHONEMES_TRACE) {
                     len = found - word1;
                     memcpy(word, word1, len); // include multiple matching words
                     word[len] = 0;
                     fprintf(f_trans, "Replace: %s  %s\n", word, *wordptr);
-                }*/
+                }
             }
 
             ph_out[0] = 0;
@@ -3118,8 +3134,8 @@ int RemoveEnding(Translator *tr, char *word, int end_type, char *word_copy)
             utf8_out(tr->langopts.suffix_add_e, &word_end[1]);
 
             // Remove for pretty print -X
-            /*if (option_phonemes & espeakPHONEMES_TRACE)
-                fprintf(f_trans, "add e\n");*/
+            if (option_phonemes & espeakPHONEMES_TRACE)
+                fprintf(f_trans, "add e\n");
         }
     }
 

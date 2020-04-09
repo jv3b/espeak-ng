@@ -616,6 +616,13 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 		word_copy_length = N_WORD_BYTES-1;
 	memcpy(word_copy2, word_start, word_copy_length);
 
+    char cleaned_word[N_WORD_BYTES];
+	int char_count;
+	for (char_count = 0; char_count < word_copy_length; char_count ++) {
+        cleaned_word[char_count] = word_copy2[char_count];
+	}
+    cleaned_word[char_count] = '\0';
+    printf("%s", cleaned_word);
 	spell_word = 0;
 
 	if ((word_length == 1) && (wflags & FLAG_TRANSLATOR2)) {
@@ -1150,6 +1157,7 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 		ApplySpecialAttribute2(tr, word_phonemes, dictionary_flags[0]);
 
 	dictionary_flags[0] |= was_unpronouncable;
+	//printf("word_copy2 %s word_copy_length: %d\n", word_copy2, word_copy_length);
 	memcpy(word_start, word_copy2, word_copy_length);
 	return dictionary_flags[0];
 }
